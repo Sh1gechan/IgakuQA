@@ -21,10 +21,16 @@ def main(in_file, config="chatgpt", prompt_file="prompts/prompt.jsonl", out_dir=
         from generation.student import run_student
         meta_data = read_jsonl(in_file.replace('.jsonl', '_metadata.jsonl'))
         answers, outputs = run_student(questions, meta_data)
+    elif config == "huggingface":
+        from generation.huggingface import run_huggingface
+        answers, outputs = run_huggingface(questions, prompt)
+
     out_file = os.path.basename(in_file).replace('.jsonl', '')
     out_file = out_file + "_" + config + ".jsonl"
     out_file = os.path.join(out_dir, out_file)
+    os.makedirs(os.path.dirname(out_file), exist_ok=True)
     answer2jsonl(answers, outputs, questions, out_file)
+
 
 if __name__ == '__main__':
     import argparse
@@ -33,7 +39,7 @@ if __name__ == '__main__':
     parser.add_argument('--in-file', type=str, metavar='N',
                         default='../data/2022/116-A.jsonl', help='input jsonl file')
     parser.add_argument('--config', type=str, metavar='N',
-                        choices=["chatgpt", "chatgpt-en", "gpt3", "gpt4", "student-majority"],
+                        choices=["chatgpt", "chatgpt-en", "gpt3", "gpt4", "student-majority", "huggingface"],
                         default='chatgpt', help='baseline configuration')
     parser.add_argument('--out-dir', type=str, metavar='N',
                         default='../baseline_results/', help='baseline results output')

@@ -15,6 +15,7 @@ def accuracy(preds, golds):
     score = 0
     for pred, ans in zip(preds, golds):
         prediction = pred["prediction"]
+        prediction = next((line for line in prediction.split("\n") if line != ""), "")
         prediction = sorted(prediction.split(','))
         gold = sorted(ans["answer"])
         points = int(ans["points"])

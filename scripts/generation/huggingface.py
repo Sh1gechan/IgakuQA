@@ -1,3 +1,4 @@
+import json
 import os
 import string
 
@@ -27,7 +28,9 @@ def run_huggingface(questions, prompt):
 def parse_model_kwargs(kwargs_str):
     if len(kwargs_str) == 0:
         return {}
-    return dict(p.split("=", 1) for p in kwargs_str.split(","))
+    kwargs = json.loads(kwargs_str)
+    assert isinstance(kwargs, dict)
+    return kwargs
 
 
 def create_input(prompt, question):

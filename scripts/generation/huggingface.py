@@ -18,9 +18,10 @@ def run_huggingface(questions, prompt):
         input_ids = tokenizer(input_)
         input_ids = torch.Tensor(input_ids.input_ids)[None].to(torch.int).to("cuda")
         answer_ids = model.generate(input_ids, max_length=2048)
-        answer = tokenizer.batch_decode(answer_ids, skip_special_tokens=True)[0]
-        assert answer.startswith(input_), (answer, input_)
-        answer = answer[len(input_):]
+        # Remove input prefix from output
+        assert (answer_ids[:, :input_ids.shape[1]] == input_ids).all()
+        answer_ids_ = answer_ids[:, input_ids.shape[1]:]
+        answer = tokenizer.batch_decode(answer_ids_, skip_special_tokens=True)[0]
         outputs.append(answer)
     return outputs, outputs
 

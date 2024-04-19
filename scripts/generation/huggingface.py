@@ -10,6 +10,8 @@ def run_huggingface(questions, prompt):
     pretrained = os.environ["PRETRAINED_MODEL_NAME_OR_PATH"]
     model_kwargs = parse_model_kwargs(os.environ.get("MODEL_KWARGS", ""))
     tokenizer_kwargs = parse_model_kwargs(os.environ.get("TOKENIZER_KWARGS", ""))
+    if "torch_dtype" in model_kwargs and model_kwargs["torch_dtype"] != "auto":
+        model_kwargs["torch_dtype"] = getattr(torch, model_kwargs["torch_dtype"])
     model = AutoModelForCausalLM.from_pretrained(pretrained, **model_kwargs)
     tokenizer = AutoTokenizer.from_pretrained(pretrained, **tokenizer_kwargs)
     outputs = []
